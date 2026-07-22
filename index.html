@@ -288,6 +288,31 @@ async function tambahData() {
       })
     });
 
+    const res = await fetch(API,{
+  method:"POST",
+  headers:{
+    "Content-Type":"text/plain;charset=utf-8"
+  },
+  body:JSON.stringify({
+    nama,
+    kelas,
+    pelanggaran,
+    kampus
+  })
+});
+
+if(!res.ok){
+  throw new Error("Server Error");
+}
+
+await ambilData();
+
+document.getElementById("nama").value="";
+document.getElementById("kelas").value="";
+document.getElementById("pelanggaran").value="";
+
+alert("Data masuk!");
+
     // 🔥 TAMBAH LANGSUNG KE CACHE
     let dataBaru = [
       nama,
