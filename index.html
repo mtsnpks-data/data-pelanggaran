@@ -158,27 +158,54 @@ let sedangSearch = false;
 
 // 🔥 LOAD DATA SUPER CEPAT
 async function ambilData() {
+try {
 
-  try {
+  const res = await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nama,
+      kelas,
+      pelanggaran,
+      kampus
+    })
+  });
 
-    let res = await fetch(API + "?t=" + Date.now());
+  const text = await res.text();
 
-    let data = await res.json();
-
-    semuaData = data;
-
-    // 🔥 cache hari ini biar gak filter ulang terus
-    cacheHariIni = filterHariIni(semuaData);
-
-    if (!sedangSearch) {
-      render(cacheHariIni);
-    }
-
-  } catch(err) {
-
-    console.log("Gagal load:", err);
-
+  if (!res.ok || text.trim() !== "Success") {
+    throw new Error(text);
   }
+
+  // 🔥 TAMBAH LANGSUNG KE CACHE
+  let dataBaru = [
+    nama,
+    kelas,
+    pelanggaran,
+    new Date().toISOString(),
+    kampus
+  ];
+
+  semuaData.unshift(dataBaru);
+  cacheHariIni.unshift(dataBaru);
+
+  render(cacheHariIni);
+
+  // RESET INPUT
+  document.getElementById("nama").value = "";
+  document.getElementById("kelas").value = "";
+  document.getElementById("pelanggaran").value = "";
+
+  alert("Data masuk!");
+
+} catch(err) {
+
+  console.error(err);
+  alert("Gagal kirim!\n\n" + err.message);
+
+}
 
 }
 
