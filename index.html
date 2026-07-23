@@ -278,15 +278,23 @@ async function tambahData() {
 
   try {
 
-    await fetch(API, {
-      method: "POST",
-      body: JSON.stringify({
-        nama,
-        kelas,
-        pelanggaran,
-        kampus
-      })
-    });
+  const res = await fetch(API, {
+  method: "POST",
+  mode: "cors",
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8"
+  },
+  body: JSON.stringify({
+    nama,
+    kelas,
+    pelanggaran,
+    kampus
+  })
+});
+
+if (!res.ok) {
+  throw new Error("Server Error");
+}
 
     // 🔥 TAMBAH LANGSUNG KE CACHE
     let dataBaru = [
