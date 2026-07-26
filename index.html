@@ -161,27 +161,27 @@ async function ambilData() {
 
   try {
 
-    let res = await fetch(API + "?t=" + Date.now());
+    const res = await fetch(API + "?t=" + Date.now());
 
-    let data = await res.json();
+    if (!res.ok) {
+      throw new Error("Server Error");
+    }
 
-    semuaData = data;
+    semuaData = await res.json();
 
-    // 🔥 cache hari ini biar gak filter ulang terus
     cacheHariIni = filterHariIni(semuaData);
 
     if (!sedangSearch) {
       render(cacheHariIni);
     }
 
-  } catch(err) {
+  } catch (err) {
 
-    console.log("Gagal load:", err);
+    console.log("Gagal load data");
 
   }
 
 }
-
 // 🔥 FILTER HARI INI
 function filterHariIni(data) {
 
