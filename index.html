@@ -276,25 +276,28 @@ async function tambahData() {
   tombol.disabled = true;
   tombol.innerText = "Mengirim...";
 
-  try {
+ try {
 
-    await fetch(API, {
-      method: "POST",
-      body: JSON.stringify({
+    const res = await fetch(API, {
+        method: "POST",
+        body: JSON.stringify({
+            nama,
+            kelas,
+            pelanggaran,
+            kampus
+        })
+    });
+
+    if (!res.ok) {
+        throw new Error("Server Error");
+    }
+
+    let dataBaru = [
         nama,
         kelas,
         pelanggaran,
+        new Date().toISOString(),
         kampus
-      })
-    });
-
-    // 🔥 TAMBAH LANGSUNG KE CACHE
-    let dataBaru = [
-      nama,
-      kelas,
-      pelanggaran,
-      new Date().toISOString(),
-      kampus
     ];
 
     semuaData.unshift(dataBaru);
@@ -302,21 +305,22 @@ async function tambahData() {
 
     render(cacheHariIni);
 
-    // RESET INPUT
     document.getElementById("nama").value = "";
     document.getElementById("kelas").value = "";
     document.getElementById("pelanggaran").value = "";
 
-    alert("Data masuk!");
+    alert("Data berhasil disimpan!");
 
-  } catch(err) {
+} catch (err) {
 
-    alert("Gagal kirim!");
+    console.log("Gagal kirim");
 
-  }
+    alert("Tidak dapat terhubung ke server.");
 
-  tombol.disabled = false;
-  tombol.innerText = "Tambah";
+} finally {
+
+    tombol.disabled = false;
+    tombol.innerText = "Tambah";
 
 }
 
@@ -446,11 +450,15 @@ function capitalize(text) {
 ambilData();
 
 // 🔥 AUTO REFRESH SUPER RINGAN
-setInterval(() => {
+setInterval(async () => {
 
   if (!sedangSearch) {
-    ambilData();
+
+    try {
+      await ambilData();
+    } catch(e) {}
+
   }
 
-}, 30000);
+},30000);
 </script>
